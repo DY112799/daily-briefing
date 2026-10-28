@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Turner Bill Tracker</title>
+<style>
+:root{--bg:#07080a;--card:#101216;--line:#1f232b;--tx:#e9eaee;--mu:#8a90a0;--red:#ef4444;--org:#f59e0b;--grn:#22c55e;--blu:#3b82f6}
+.light{--bg:#f4f5f7;--card:#fff;--line:#e3e5ea;--tx:#18181b;--mu:#6b7280}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--tx)}
+main{padding:24px;max-width:1200px;margin:0 auto}
+.hero{background:linear-gradient(135deg,#1e3a8a,#0f172a);color:#fff;border-radius:18px;padding:22px 26px;display:flex;justify-content:space-between;flex-wrap:wrap}
+.hero h2{margin:4px 0;font-size:28px}#clock{font-size:30px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}.stat b{font-size:24px;display:block}.stat span{color:var(--mu);font-size:12px}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}.card{margin-bottom:18px}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;justify-content:space-between;flex-wrap:wrap}
+button{background:var(--line);color:var(--tx);border:0;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;margin-left:4px}button.on{background:var(--blu);color:#fff}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.bar{width:4px;height:38px;border-radius:4px}.nm{flex:1}.nm b{display:block;font-size:14px}.nm span{font-size:12px;color:var(--mu)}
+.tag{font-size:10px;color:var(--org);border:1px solid #f59e0b66;border-radius:6px;padding:1px 5px;margin-left:6px}
+.paid{opacity:.4}.paid .nm b{text-decoration:line-through}
+.prog{height:8px;background:var(--line);border-radius:9px;margin-top:8px}.prog i{display:block;height:100%;background:var(--grn);border-radius:9px}
+.fc{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}.fc div{background:var(--line);border-radius:10px;padding:8px;text-align:center;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style></head><body><main>
+<div class="hero"><div><div id="date"></div><h2 id="greet"></h2><div id="sum" style="opacity:.85"></div></div><div style="text-align:right"><div id="clock"></div><div style="font-size:12px;opacity:.7">Central Time · live</div><button onclick="document.body.classList.toggle('light')">🌓 Light/dark</button></div></div>
+<div class="stats"><div class="stat"><span>Overdue</span><b id="sO" style="color:var(--red)"></b><span id="sOn"></span></div>
+<div class="stat"><span>Due next 7 days</span><b id="sW" style="color:var(--org)"></b><span id="sWn"></span></div>
+<div class="stat"><span>Paid so far</span><b id="sP" style="color:var(--grn)"></b><div class="prog"><i id="pB"></i></div></div>
+<div class="stat"><span>Diesel, Gulf Coast (sample)</span><b>$3.52</b><span>down 2¢ vs last week</span></div></div>
+<div class="grid"><div class="card"><h3>Bills & cards<span><button class="on" data-f="all">All</button><button data-f="late">Overdue</button><button data-f="week">This week</button><button data-f="shared">Shared</button></span></h3><div id="list"></div></div>
+<div><div class="card"><h3>Weather · Katy, TX<span id="ws" style="font-size:11px;color:var(--mu)">loading…</span></h3><span id="wt" style="font-size:42px;font-weight:700">--°</span> <span id="wd" style="color:var(--mu)"></span><div class="fc" id="fc"></div></div>
+<div class="card"><h3>Pay first</h3><div id="next"></div></div>
+<div class="card"><h3>Do now</h3><div id="todo"></div></div></div></div></main>
+<script>
+const Y=2026,B=[['f','Fortiva MC ••2785',132,'10-19',1],['s','Synchrony MC ••9937',25,'10-20',1],['m','myAcademy ••4212',25,'10-21',1],['t','Truck Loan',644.21,'10-28'],['g','Gas – Home',50,'10-30',0,1],['e','Electricity',400,'10-30',0,1],['w','Water',100,'10-30',0,1],['i','Car Insurance',365.52,'10-30',0,1],['l','Lawn Service',140,'10-30',0,1]].map(r=>({id:r[0],n:r[1],a:r[2],d:r[3],c:r[4],s:r[5]}));
+let P=JSON.parse(localStorage.getItem('tbtP')||'{}'),F='all';
+const $=i=>document.getElementById(i),fm=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),sm=a=>a.reduce((s,b)=>s+b.a,0);
+const ct=()=>new Date(new Date().toLocaleString('en-US',{timeZone:'America/Chicago'}));
+function dd(b){const t=ct();t.setHours(0,0,0,0);return Math.round((new Date(Y+'-'+b.d+'T00:00')-t)/864e5)}
+const col=x=>x<0?'var(--red)':x<=3?'var(--org)':'var(--grn)',lab=x=>x<0?-x+' days late':x==0?'Due today':x==1?'Due tomorrow':'Due in '+x+' days';
+function render(){const L=B.map(b=>({...b,x:dd(b),p:!!P[b.id]})).sort((a,b)=>a.p-b.p||a.x-b.x);
+const o=L.filter(b=>!b.p&&b.x<0),w=L.filter(b=>!b.p&&b.x>=0&&b.x<=7),p=L.filter(b=>b.p);
+$('sO').textContent=fm(sm(o));$('sOn').textContent=o.length+' payments';$('sW').textContent=fm(sm(w));$('sWn').textContent=w.length+' payments';
+$('sP').textContent=fm(sm(p));$('pB').style.width=sm(p)/sm(L)*100+'%';
+$('sum').textContent=o.length+' overdue · '+w.length+' due this week · '+fm(sm(o)+sm(w))+' needed';
+$('list').innerHTML=L.filter(b=>F=='all'||(F=='late'&&b.x<0&&!b.p)||(F=='week'&&b.x>=0&&b.x<=7)||(F=='shared'&&b.s)).map(b=>`<div class="row ${b.p?'paid':''}"><i class="bar" style="background:${b.p?'var(--line)':col(b.x)}"></i><div class="nm"><b>${b.c?'💳 ':''}${b.n}${b.s?'<span class="tag">SHARED</span>':''}</b><span style="color:${b.p?'':col(b.x)}">${b.p?'Paid':lab(b.x)}</span><span> · ${b.d.replace('-','/')}${b.c?' · minimum':''}</span></div><b>${fm(b.a)}</b><button onclick="tg('${b.id}')">${b.p?'Undo':'Mark paid'}</button></div>`).join('')||'<p>Nothing here 🎉</p>';
+$('next').innerHTML=L.filter(b=>!b.p).slice(0,3).map((b,i)=>`<div class="row"><b>${i+1}.</b><div class="nm"><b>${b.n}</b><span>${lab(b.x)}</span></div><b>${fm(b.a)}</b></div>`).join('');
+$('todo').innerHTML=o.length?`⚠️ Pay or call about ${o.length} late card(s) today to stop late fees (${fm(sm(o))}).`:'✅ Nothing urgent.'}
+function tg(id){P[id]?delete P[id]:P[id]=1;localStorage.setItem('tbtP',JSON.stringify(P));render()}
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('on'));b.classList.add('on');F=b.dataset.f;render()});
+function tick(){const t=ct(),h=t.getHours();$('clock').textContent=t.toLocaleTimeString('en-US');$('date').textContent=t.toDateString();$('greet').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', Douglas'}
+const ic=c=>c<1?'☀️':c<4?'⛅':c<50?'🌫️':c<70?'🌧️':c<80?'🌦️':'⛈️';
+fetch('https://api.open-meteo.com/v1/forecast?latitude=29.79&longitude=-95.82&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/Chicago&forecast_days=5').then(r=>r.json()).then(d=>{const c=d.current;$('wt').textContent=ic(c.weather_code)+' '+Math.round(c.temperature_2m)+'°F';$('wd').textContent='Wind '+Math.round(c.wind_speed_10m)+' mph · Humidity '+c.relative_humidity_2m+'%';$('ws').textContent='live';$('fc').innerHTML=d.daily.time.map((t,i)=>`<div>${new Date(t+'T12:00').toDateString().slice(0,3)}<br>${ic(d.daily.weather_code[i])}<br><b>${Math.round(d.daily.temperature_2m_max[i])}°</b> ${Math.round(d.daily.temperature_2m_min[i])}°</div>`).join('')}).catch(()=>$('ws').textContent='offline');
+tick();render();setInterval(tick,1000);setInterval(render,60000);
+</script></body></html>
