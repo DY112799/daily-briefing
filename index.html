@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Xcell Transport · Daily Briefing</title>
 <style>
-:root{--bg:#F7F7F5;--card:#FFF;--ink:#18181B;--mut:#71717A;--ln:#E4E4E0;--acc:#1E3A5F;--red:#B42318;--org:#B54708;--grn:#067647}
+:root{--bg:#000;--card:#0E1116;--ink:#F2F4F7;--mut:#8A94A6;--ln:#1F2630;--acc:#1E9BE0;--red:#E3262B;--org:#F79009;--grn:#12B76A}
 *{box-sizing:border-box;margin:0;padding:0}body{font:14px/1.5 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:var(--card);border-bottom:1px solid var(--ln)}.in{max-width:1080px;margin:0 auto;padding:0 24px}
+header{background:#000;border-bottom:2px solid var(--red)}.in{max-width:1080px;margin:0 auto;padding:0 24px}
 .top{display:flex;justify-content:space-between;align-items:center;height:64px}.brand{font-weight:600;letter-spacing:.04em}.brand span{color:var(--mut);font-weight:400;margin-left:10px;letter-spacing:0}
 #clock{font-variant-numeric:tabular-nums;color:var(--mut)}h1{font-size:22px;font-weight:600;margin:28px 0 2px}.sub{color:var(--mut);margin-bottom:24px}
 .kpi{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ln);background:var(--card);border-radius:6px;margin-bottom:24px}
@@ -10,11 +10,11 @@ header{background:var(--card);border-bottom:1px solid var(--ln)}.in{max-width:10
 .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}.val{font-size:24px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}.note{font-size:12px;color:var(--mut)}
 .bar{height:3px;background:var(--ln);margin-top:10px}.bar i{display:block;height:100%;background:var(--acc)}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:24px}.card{background:var(--card);border:1px solid var(--ln);border-radius:6px;margin-bottom:24px}
-.ch{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--ln)}.ch h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.flt button{border:1px solid var(--ln);background:none;padding:4px 10px;font-size:12px;color:var(--mut);cursor:pointer;margin-left:-1px}.flt button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--ln)}.ch h2{color:var(--acc);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.flt button{border:1px solid var(--ln);background:none;padding:4px 10px;font-size:12px;color:var(--mut);cursor:pointer;margin-left:-1px}.flt button.on{background:var(--acc);color:#000;border-color:var(--acc)}
 table{width:100%;border-collapse:collapse}td{padding:12px 20px;border-bottom:1px solid var(--ln)}tr:last-child td{border:0}td.n{font-weight:500}td.a{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}.st{font-size:12px;font-weight:500}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:10px}.paid td{color:var(--mut)}.paid td.n,.paid td.a{text-decoration:line-through}
-.pb{border:1px solid var(--ln);background:none;padding:4px 10px;font-size:12px;cursor:pointer;border-radius:4px}.pb:hover{border-color:var(--acc);color:var(--acc)}
+.pb{border:1px solid var(--ln);background:none;color:var(--ink);padding:4px 10px;font-size:12px;cursor:pointer;border-radius:4px}.pb:hover{border-color:var(--acc);color:var(--acc)}
 .sec{padding:16px 20px;border-bottom:1px solid var(--ln)}.sec:last-child{border:0}#wt{font-size:28px;font-weight:600}
 #fc{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;font-size:12px;color:var(--mut)}#fc b{color:var(--ink)}
 .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--ln)}.row:last-child{border:0}
@@ -22,7 +22,7 @@ table{width:100%;border-collapse:collapse}td{padding:12px 20px;border-bottom:1px
 footer{text-align:center;color:var(--mut);font-size:12px;padding:8px 24px 32px}
 @media(max-width:800px){.grid,.kpi{grid-template-columns:1fr}.kpi>div{border-right:0;border-bottom:1px solid var(--ln)}td{padding:10px 12px}.hide{display:none}}
 </style></head><body>
-<header><div class="in top"><div class="brand">XCELL TRANSPORT<span>Daily Briefing</span></div><div id="clock"></div></div></header>
+<header><div class="in top"><div class="brand" style="display:flex;align-items:center"><img src="logo.jpg" alt="Xcell Transport" style="height:48px"><span style="border-left:1px solid var(--ln);padding-left:12px">Daily Briefing</span></div><div id="clock"></div></div></header>
 <main class="in"><h1 id="greet"></h1><div class="sub" id="date"></div>
 <div class="kpi"><div><div class="lbl">Overdue</div><div class="val" id="sO" style="color:var(--red)"></div><div class="note" id="sOn"></div></div>
 <div><div class="lbl">Due next 7 days</div><div class="val" id="sW"></div><div class="note" id="sWn"></div></div>
